@@ -70,7 +70,6 @@
           .image {
             position: relative;
             z-index: 1;
-            margin-top: 20rem;
             width: 100%;
             max-width: 79.8rem;
             margin: 0 auto;
@@ -184,9 +183,7 @@
             line-height: 5.9rem;
           }
           .image {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            @include centerTotalFlex;
             img {
               max-width: 72rem;
             }

@@ -220,7 +220,7 @@ ul {
   color: var(--type-dragon);
 }
 .type-filter.electric span {
-  color: #EED967;
+  color: var(--type-electric);
 }
 .type-filter.fairy span {
   color: var(--type-fairy);
@@ -1085,7 +1085,6 @@ footer .text p {
 .s-area-slide-hero .slide-hero .swiper-slide .main-area .text .image {
   position: relative;
   z-index: 1;
-  margin-top: 20rem;
   width: 100%;
   max-width: 79.8rem;
   margin: 0 auto;
