@@ -12,6 +12,8 @@ const countPokemons = document.getElementById('js-count-pokemons');
 const areaPokemons = document.getElementById('js-list-pokemons');
 const btnDropdownSelect = document.querySelector('.js-open-select-custom');
 const areaTypes = document.getElementById('js-type-area');
+const areaTypesMobile = document.querySelector('.dropdown-select');
+const btnLoadMore = document.getElementById('js-btn-load-more');
 
 if(btnCloseModal) {
   btnCloseModal.addEventListener('click', closeDetailsPokemon);
@@ -83,11 +85,11 @@ function listingPokemons(urlApi) {
       })
       .then((response) => {
         const { name, id, sprites, types } = response.data;
-
+        console.log(response.data);
         const infoCard = {
           name: name,
           code: id,
-          image: sprites.other.dream_world.front_default,
+          image: sprites.other.dream_world.front_default || sprites.other.official-artwork.front_default || sprites.front_default,
           type: types[0].type.name
         }
 
@@ -103,7 +105,7 @@ function listingPokemons(urlApi) {
   })
 }
 
-listingPokemons('https://pokeapi.co/api/v2/pokemon?limit=9&offset=0')
+listingPokemons('https://pokeapi.co/api/v2/pokemon?limit=9&offset=0');
 
 function openDetailsPokemon() {
   document.documentElement.classList.add('open-modal');
@@ -129,7 +131,8 @@ axios({
       areaTypes.appendChild(itemType);
   
       let buttonType = document.createElement('button');
-      buttonType.classList = `type-filter ${type.name}`
+      buttonType.classList = `type-filter ${type.name}`;
+      buttonType.setAttribute('code-type', index + 1);
       itemType.appendChild(buttonType);
   
       let iconType = document.createElement('div');
@@ -143,9 +146,119 @@ axios({
       let nameType = document.createElement('span');
       nameType.textContent = capitalFirstLetter(type.name);
       buttonType.appendChild(nameType);
+
+      // Aqui é o preenchimento do select mobile dos tipos
+
+      let itemTypeMobile = document.createElement('li');
+      areaTypesMobile.appendChild(itemTypeMobile);
+  
+      let buttonTypeMobile = document.createElement('button');
+      buttonTypeMobile.classList = `type-filter ${type.name}`;
+      buttonTypeMobile.setAttribute('code-type', index + 1);
+      itemTypeMobile.appendChild(buttonTypeMobile);
+  
+      let iconTypeMobile = document.createElement('div');
+      iconTypeMobile.classList = 'icon';
+      buttonTypeMobile.appendChild(iconTypeMobile);
+  
+      let srcTypeMobile = document.createElement('img');
+      srcTypeMobile.setAttribute('src', `img/icon-types/${type.name}.svg`);
+      iconTypeMobile.appendChild(srcTypeMobile);
+
+      let nameTypeMobile = document.createElement('span');
+      nameTypeMobile.textContent = capitalFirstLetter(type.name);
+      buttonTypeMobile.appendChild(nameTypeMobile);
+
+      const allTypes = document.querySelectorAll('.type-filter');
+
+      allTypes.forEach(btn => {
+        btn.addEventListener('click', filterByTypes);
+      })
     }
   })
 })
 
+// Aqui é o script que faz a funcionalidade load more
 
+let countPaginations = 10;
 
+function showMorePokemons() {
+  listingPokemons(`https://pokeapi.co/api/v2/pokemon?limit=9&offset=${countPaginations}`);
+
+  countPaginations = countPaginations + 9;
+}
+
+btnLoadMore.addEventListener('click', showMorePokemons);
+
+// Aqui é o script que filtra os pokemons por tipo
+
+function filterByTypes() {
+  let idPokemons = this.getAttribute('code-type');
+
+  const areaPokemons = document.getElementById('js-list-pokemons');
+  const btnLoadMore = document.getElementById('js-btn-load-more');
+  const countPokemonsType = document.getElementById('js-count-pokemons');
+  const allTypes  = document.querySelectorAll('.type-filter');
+
+  areaPokemons.innerText = "";
+  btnLoadMore.style.display = "none";
+
+  const sectionPokemons = document.querySelector('.s-all-info-pokemons');
+  const topSection = sectionPokemons.offsetTop;
+
+  window.scrollTo({
+    top: topSection + 288,
+    behavior: "smooth"
+  })
+
+  allTypes.forEach(type => {
+    type.classList.remove('active');
+  })
+
+  this.classList.add('active');
+
+  if(idPokemons) {
+    axios({
+      method: 'GET',
+      url: `https://pokeapi.co/api/v2/type/${idPokemons}`
+    })
+    .then((response) => {
+  
+      const { pokemon } = response.data;
+      countPokemonsType.textContent = pokemon.length;
+  
+      pokemon.forEach(pok => {
+        const { url } = pok.pokemon;
+  
+        axios({
+          method: 'GET',
+          url: `${url}`
+        })
+        .then((response) => {
+          const { name, id, sprites, types } = response.data;
+  
+          const infoCard = {
+            name: name,
+            code: id,
+            image: sprites.other.dream_world.front_default || sprites.other.official-artwork.front_default || sprites.front_default,
+            type: types[0].type.name
+          }
+  
+          createCardPokemon(infoCard.code, infoCard.type, infoCard.name, infoCard.image);
+  
+          const cardPokemon  = document.querySelectorAll('.js-open-details-pokemon');
+  
+          cardPokemon.forEach(card => {
+            card.addEventListener('click', openDetailsPokemon);
+          })
+        })
+      })
+    })
+  } else {
+    areaPokemons.innerText = "";
+
+    listingPokemons('https://pokeapi.co/api/v2/pokemon?limit=9&offset=0');
+
+    btnLoadMore.style.display = "block";
+  }
+}
