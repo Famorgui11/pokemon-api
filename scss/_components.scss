@@ -763,6 +763,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            overflow: hidden;
             &:not(:last-child) {
               margin-bottom: 1.3rem;
             }
