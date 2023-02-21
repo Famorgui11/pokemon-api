@@ -769,6 +769,7 @@ ul {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
+  overflow: hidden;
 }
 .modal .box .right-container .stats .all .item:not(:last-child) {
   margin-bottom: 1.3rem;
@@ -1088,7 +1089,9 @@ footer .text p {
   width: 100%;
   max-width: 79.8rem;
   margin: 0 auto;
-  margin-top: 12.2rem;
+  margin-top: 16.2rem;
+  -webkit-animation: float 6s ease-in-out infinite;
+  animation: float 6s ease-in-out infinite;
 }
 .s-area-slide-hero .slide-hero .swiper-slide .main-area .text .image .lights {
   position: absolute;
@@ -1423,5 +1426,35 @@ footer .text p {
     max-width: 86%;
     margin: 0 auto;
     margin-bottom: 4.8rem;
+  }
+}
+
+@-webkit-keyframes float {
+  0% {
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+  50% {
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+  }
+  100% {
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+}
+
+@keyframes float {
+  0% {
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+  50% {
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+  }
+  100% {
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
   }
 }
